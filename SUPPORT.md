@@ -2,9 +2,9 @@
 
 ## Integration questions
 
-Use [GitHub Discussions](https://github.com/changye0413/BoltUtil/discussions) for API integration questions, implementation patterns, and product feedback that can be discussed publicly.
+Use [GitHub Discussions](https://github.com/changye0413/boltutil/discussions) for API integration questions, implementation patterns, and product feedback that can be discussed publicly.
 
-Use an [Issue template](https://github.com/changye0413/BoltUtil/issues/new/choose) for a reproducible problem in the public documentation or examples.
+Use an [Issue template](https://github.com/changye0413/boltutil/issues/new/choose) for a reproducible problem in the public documentation or examples.
 
 For account-specific assistance, email **support@boltutil.com**.
 

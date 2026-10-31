@@ -2,6 +2,14 @@
 
 This changelog covers the documentation and merchant-side examples in this public repository. It is not a complete production-service deployment log.
 
+## Documentation maintenance — 2026-10-31
+
+- Use evergreen API documentation positioning and consistent lowercase repository links.
+- Correct Base default L2 confirmation and optional strict L1 finality in all twelve guides.
+- Link the published WordPress.org plugin and explain directory language packs versus bundled GitHub translations.
+- Document HTTP 429 rate/daily-allowance responses and plan-dependent expiry.
+- Preserve historical tags, release artifacts, platform/source boundaries and API contract version.
+
 ## v2.1 documentation refresh — 2026-10-12
 
 - Update product guides from five-network USDT to six-network USDT/USDC scope, including Base.

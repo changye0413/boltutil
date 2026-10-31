@@ -1,16 +1,16 @@
-# BoltUtil v2.1
+# BoltUtil — USDT / USDC भुगतान API
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [Español](README.es.md) · [Português](README.pt-BR.md) · [Русский](README.ru.md) · [Tiếng Việt](README.vi.md) · [Türkçe](README.tr.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [العربية](README.ar.md) · [Français](README.fr.md) · [हिन्दी](README.hi.md)
 
 ## USDT और USDC भुगतान सीधे आपके वॉलेट में।
 
-[मुफ़्त शुरू करें](https://boltutil.com/hi/auth/register?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=start) · [API दस्तावेज़](https://boltutil.com/hi/developer-docs?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=docs) · [कीमतें](https://boltutil.com/hi/pricing?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=pricing)
+[मुफ़्त शुरू करें](https://boltutil.com/hi/auth/register?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=start) · [API दस्तावेज़](https://boltutil.com/hi/developer-docs?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=docs) · [कीमतें](https://boltutil.com/hi/pricing?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=pricing)
 
-BoltUtil v2.1 वेबसाइट, SaaS और WooCommerce स्टोर के लिए एक नॉन-कस्टोडियल स्टेबलकॉइन भुगतान API और होस्ट किया गया चेकआउट है। व्यापारी का सर्वर ऑर्डर बनाता है और ग्राहक व्यापारी के पते पर भुगतान करता है। BoltUtil ऑन-चेन ट्रांसफ़र और आवश्यक पुष्टियों की जाँच के बाद हस्ताक्षरित Webhook भेजता है। यह निजी कुंजी या रिकवरी फ़्रेज़ नहीं माँगता।
+BoltUtil वेबसाइट, SaaS और WooCommerce स्टोर के लिए एक नॉन-कस्टोडियल स्टेबलकॉइन भुगतान API और होस्ट किया गया चेकआउट है। व्यापारी का सर्वर ऑर्डर बनाता है और ग्राहक व्यापारी के पते पर भुगतान करता है। BoltUtil ऑन-चेन ट्रांसफ़र और आवश्यक पुष्टियों की जाँच के बाद हस्ताक्षरित Webhook भेजता है। यह निजी कुंजी या रिकवरी फ़्रेज़ नहीं माँगता।
 
 ## नेटवर्क और एसेट
 
-एक इंटीग्रेशन में छह नेटवर्क और ग्यारह एसेट/नेटवर्क संयोजन हैं। TRON पर USDT; Ethereum, Polygon PoS और Solana पर USDT व नेटिव USDC; BNB Smart Chain पर USDT व Binance-Peg USDC; Base पर Bridged USDT व नेटिव USDC उपलब्ध हैं। केवल सेवा द्वारा सक्रिय और व्यापारी के सक्रिय प्राप्तकर्ता पते वाले रूट दिखते हैं। नेटिव, ब्रिज्ड और पेग्ड टोकन एक-दूसरे के विकल्प नहीं हैं; ऑर्डर का सही कॉन्ट्रैक्ट या mint इस्तेमाल करें। Base की पुष्टि कॉन्फ़िगर की गई L1 फ़ाइनलिटी नीति पर निर्भर है; निश्चित समय की गारंटी नहीं है।
+एक इंटीग्रेशन में छह नेटवर्क और ग्यारह एसेट/नेटवर्क संयोजन हैं। TRON पर USDT; Ethereum, Polygon PoS और Solana पर USDT व नेटिव USDC; BNB Smart Chain पर USDT व Binance-Peg USDC; Base पर Bridged USDT व नेटिव USDC उपलब्ध हैं। केवल सेवा द्वारा सक्रिय और व्यापारी के सक्रिय प्राप्तकर्ता पते वाले रूट दिखते हैं। नेटिव, ब्रिज्ड और पेग्ड टोकन एक-दूसरे के विकल्प नहीं हैं; ऑर्डर का सही कॉन्ट्रैक्ट या mint इस्तेमाल करें। Base डिफ़ॉल्ट रूप से L2 पुष्टि का उपयोग करता है और कॉन्फ़िगर की गई शर्तें पूरी होने पर ऑर्डर अपडेट करता है। सख्त मोड L1 फ़ाइनलिटी की प्रतीक्षा करता है। समय नेटवर्क और सेवा की स्थिति पर निर्भर है; निश्चित समय की गारंटी नहीं है।
 
 ## वॉलेट भुगतान या मैनुअल ट्रांसफ़र
 
@@ -28,12 +28,12 @@ API की न्यूनतम राशि 1 है और अधिकतम
 
 ## WooCommerce और योजनाएँ
 
-अलग प्लगइन v0.6.1 टोकन और नेटवर्क चुनने देता है, और भुगतान जाँचने के बाद ऑर्डर अपडेट करता है। स्टोर पर लौटना भुगतान का प्रमाण नहीं है। WordPress 7.0+, PHP 7.4+, WooCommerce 11.1+, HTTPS और स्टोर मुद्रा USD चाहिए; लाइव विनिमय दर या रेट लॉक नहीं मिलता। 12 अक्टूबर 2026 को WordPress.org में जमा किया गया: ऑटोमैटिक स्कैन पास, मैनुअल समीक्षा लंबित। डायरेक्टरी में प्रकाशन तक GitHub Releases का ZIP इस्तेमाल करें। डेमो स्टोर की खरीद में वास्तविक पैसे लगते हैं।
+प्लगइन v0.6.1 [WordPress.org](https://wordpress.org/plugins/boltutil-payments-for-woocommerce/) प्लगइन डायरेक्टरी में प्रकाशित है। इसके लिए WordPress 7.0+, PHP 7.4+, WooCommerce 11.1+, HTTPS, USD मुद्रा वाला स्टोर और BoltUtil खाता आवश्यक हैं। ग्राहक टोकन और नेटवर्क चुनता है; ऑर्डर पूरा करने से पहले हस्ताक्षरित Webhook और भुगतान स्थिति की जाँच होती है। स्टोर पर लौटना भुगतान का प्रमाण नहीं है। लाइव विनिमय दर उपलब्ध नहीं है। WordPress.org से इंस्टॉल करें या GitHub Releases का संस्करण वाला ZIP उपयोग करें। डेमो में खरीद वास्तविक धन से होती है।
 
 दैनिक मुफ़्त ऑर्डर कोटा और दैनिक ऑर्डर सीमा के बिना सब्सक्रिप्शन उपलब्ध हैं। मौजूदा कोटा, लाभ और शुल्क आधिकारिक साइट पर देखें; नेटवर्क फ़ीस अलग है। कम, देर से या अस्पष्ट भुगतान की समीक्षा चाहिए। BoltUtil एक्सचेंज नहीं है और अपने आप फ़िएट में नहीं बदलता।
 
 इस रिपॉज़िटरी के दस्तावेज़ और उदाहरण MIT हैं; प्रोडक्शन प्लेटफ़ॉर्म का स्रोत निजी है। प्लगइन GPLv2 या बाद का है। ब्रांड नाम आधिकारिक समर्थन नहीं दर्शाते। अंग्रेज़ी गाइड और API तकनीकी आधार हैं। सीक्रेट सार्वजनिक न करें; सुरक्षा समस्याओं के लिए SECURITY.md देखें।
 
-[USDC गाइड](https://boltutil.com/hi/docs/usdc-integration?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=readme) · [Base गाइड](https://boltutil.com/hi/docs/base-integration?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=readme) · [WooCommerce प्लगइन](https://github.com/changye0413/boltutil-payments-for-woocommerce) · [डेमो स्टोर](https://shop-test.boltutil.com/)
+[USDC गाइड](https://boltutil.com/hi/docs/usdc-integration?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=readme) · [Base गाइड](https://boltutil.com/hi/docs/base-integration?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=readme) · [WooCommerce प्लगइन](https://github.com/changye0413/boltutil-payments-for-woocommerce) · [डेमो स्टोर](https://shop-test.boltutil.com/)
 
-[सहायता और उदाहरण](examples/README.md) · [OpenAPI](openapi.yaml) · [Postman](postman/BoltUtil.postman_collection.json) · [Discussions](https://github.com/changye0413/BoltUtil/discussions) · [support@boltutil.com](mailto:support@boltutil.com) · [X: @heyharryzhang](https://x.com/heyharryzhang) · [English](README.md)
+[सहायता और उदाहरण](examples/README.md) · [OpenAPI](openapi.yaml) · [Postman](postman/BoltUtil.postman_collection.json) · [Discussions](https://github.com/changye0413/boltutil/discussions) · [support@boltutil.com](mailto:support@boltutil.com) · [X: @heyharryzhang](https://x.com/heyharryzhang) · [English](README.md)

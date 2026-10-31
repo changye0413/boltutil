@@ -1,16 +1,16 @@
-# BoltUtil v2.1
+# BoltUtil — واجهة API لمدفوعات USDT / USDC
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [Español](README.es.md) · [Português](README.pt-BR.md) · [Русский](README.ru.md) · [Tiếng Việt](README.vi.md) · [Türkçe](README.tr.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [العربية](README.ar.md) · [Français](README.fr.md) · [हिन्दी](README.hi.md)
 
 ## مدفوعات USDT وUSDC تصل مباشرة إلى محفظتك.
 
-[ابدأ مجانًا](https://boltutil.com/ar/auth/register?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=start) · [وثائق API](https://boltutil.com/ar/developer-docs?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=docs) · [الأسعار](https://boltutil.com/ar/pricing?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=pricing)
+[ابدأ مجانًا](https://boltutil.com/ar/auth/register?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=start) · [وثائق API](https://boltutil.com/ar/developer-docs?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=docs) · [الأسعار](https://boltutil.com/ar/pricing?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=pricing)
 
-BoltUtil v2.1 هو واجهة API لمدفوعات العملات المستقرة وصفحة دفع مستضافة دون حفظ الأموال لدى المنصة، للمواقع وخدمات SaaS ومتاجر WooCommerce. ينشئ خادم التاجر الطلب، ويدفع العميل إلى عنوان التاجر. يتحقق BoltUtil من التحويل وتأكيدات الشبكة ثم يرسل Webhook موقّعًا. لا يطلب المفاتيح الخاصة أو عبارات الاسترداد.
+BoltUtil هو واجهة API لمدفوعات العملات المستقرة وصفحة دفع مستضافة دون حفظ الأموال لدى المنصة، للمواقع وخدمات SaaS ومتاجر WooCommerce. ينشئ خادم التاجر الطلب، ويدفع العميل إلى عنوان التاجر. يتحقق BoltUtil من التحويل وتأكيدات الشبكة ثم يرسل Webhook موقّعًا. لا يطلب المفاتيح الخاصة أو عبارات الاسترداد.
 
 ## الشبكات والأصول
 
-تكامل واحد لست شبكات وإحدى عشرة تركيبة أصل/شبكة. تدعم TRON عملة USDT. تدعم Ethereum وPolygon PoS وSolana عملتي USDT وUSDC الأصلي. تدعم BNB Smart Chain عملتي USDT وBinance-Peg USDC. تدعم Base عملتي Bridged USDT وUSDC الأصلي. تظهر المسارات التي فعّلها النظام ولها عنوان استقبال نشط للتاجر فقط. النسخ الأصلية والمجسّرة والمربوطة ليست قابلة للاستبدال؛ استخدم العقد أو mint المحدد في الطلب. تأكيد Base يتبع سياسة نهائية L1 المهيأة، ولا يُضمن وقت ثابت.
+تكامل واحد لست شبكات وإحدى عشرة تركيبة أصل/شبكة. تدعم TRON عملة USDT. تدعم Ethereum وPolygon PoS وSolana عملتي USDT وUSDC الأصلي. تدعم BNB Smart Chain عملتي USDT وBinance-Peg USDC. تدعم Base عملتي Bridged USDT وUSDC الأصلي. تظهر المسارات التي فعّلها النظام ولها عنوان استقبال نشط للتاجر فقط. النسخ الأصلية والمجسّرة والمربوطة ليست قابلة للاستبدال؛ استخدم العقد أو mint المحدد في الطلب. تستخدم Base تأكيد L2 افتراضيًا، ويُحدّث الطلب بعد استيفاء شروط التأكيد المهيأة. ينتظر الوضع الصارم نهائية L1. يعتمد الوقت على حالة الشبكة والخدمة ولا يُضمن وقت ثابت.
 
 ## الدفع بالمحفظة أو التحويل اليدوي
 
@@ -28,12 +28,12 @@ BoltUtil v2.1 هو واجهة API لمدفوعات العملات المستقر
 
 ## WooCommerce والخطط
 
-الإضافة المنفصلة v0.6.1 تتيح اختيار العملة والشبكة، وتتحقق من الدفع قبل تحديث الطلب. العودة إلى المتجر ليست إثباتًا للدفع. تتطلب WordPress 7.0+ وPHP 7.4+ وWooCommerce 11.1+ وHTTPS وعملة متجر USD؛ لا توفر سعر صرف مباشرًا أو تثبيتًا له. قُدّمت إلى WordPress.org في 12 أكتوبر 2026، واجتازت الفحص التلقائي وتنتظر المراجعة اليدوية. استخدم ZIP من GitHub Releases قبل نشرها في الدليل. مشتريات المتجر التجريبي تستخدم أموالًا حقيقية.
+الإضافة v0.6.1 متاحة في دليل إضافات [WordPress.org](https://wordpress.org/plugins/boltutil-payments-for-woocommerce/). تتطلب WordPress 7.0+ وPHP 7.4+ وWooCommerce 11.1+ وHTTPS ومتجرًا بعملة USD وحساب BoltUtil. اختر العملة والشبكة، وتحقق من توقيع Webhook وحالة الدفع قبل تنفيذ الطلب؛ العودة إلى المتجر لا تثبت الدفع. لا يوجد عرض مباشر لسعر الصرف. استخدم تثبيت WordPress.org أو ZIP الإصدار من GitHub؛ مشتريات المتجر التجريبي تستخدم أموالًا حقيقية.
 
 توجد حصة مجانية يومية واشتراكات دون حد يومي للطلبات. راجع الحصص والمزايا والأسعار الحالية في الموقع الرسمي؛ رسوم الشبكة منفصلة. الدفعات الناقصة أو المتأخرة أو غير محددة الطلب تحتاج إلى مراجعة. BoltUtil ليس منصة تداول ولا يحوّل الأموال تلقائيًا إلى العملات التقليدية.
 
 المستودع يحتوي وثائق وأمثلة بترخيص MIT، وليس شيفرة المنصة الإنتاجية المغلقة. الإضافة بترخيص GPLv2 أو أحدث. أسماء العلامات لا تعني تأييدًا رسميًا. الدليل الإنجليزي ومرجع API هما الأساس التقني. لا تنشر أسرارًا، واتبع SECURITY.md للإبلاغ عن الثغرات.
 
-[دليل USDC](https://boltutil.com/ar/docs/usdc-integration?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=readme) · [دليل Base](https://boltutil.com/ar/docs/base-integration?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=readme) · [إضافة WooCommerce](https://github.com/changye0413/boltutil-payments-for-woocommerce) · [المتجر التجريبي](https://shop-test.boltutil.com/)
+[دليل USDC](https://boltutil.com/ar/docs/usdc-integration?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=readme) · [دليل Base](https://boltutil.com/ar/docs/base-integration?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=readme) · [إضافة WooCommerce](https://github.com/changye0413/boltutil-payments-for-woocommerce) · [المتجر التجريبي](https://shop-test.boltutil.com/)
 
-[الدعم والأمثلة](examples/README.md) · [OpenAPI](openapi.yaml) · [Postman](postman/BoltUtil.postman_collection.json) · [Discussions](https://github.com/changye0413/BoltUtil/discussions) · [support@boltutil.com](mailto:support@boltutil.com) · [X: @heyharryzhang](https://x.com/heyharryzhang) · [English](README.md)
+[الدعم والأمثلة](examples/README.md) · [OpenAPI](openapi.yaml) · [Postman](postman/BoltUtil.postman_collection.json) · [Discussions](https://github.com/changye0413/boltutil/discussions) · [support@boltutil.com](mailto:support@boltutil.com) · [X: @heyharryzhang](https://x.com/heyharryzhang) · [English](README.md)

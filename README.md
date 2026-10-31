@@ -1,17 +1,19 @@
-# BoltUtil v2.1
+# BoltUtil — USDT & USDC Payment API
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [Español](README.es.md) · [Português](README.pt-BR.md) · [Русский](README.ru.md) · [Tiếng Việt](README.vi.md) · [Türkçe](README.tr.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [العربية](README.ar.md) · [Français](README.fr.md) · [हिन्दी](README.hi.md)
 
 ## USDT & USDC payments. Direct to your wallet.
 
-**A non-custodial stablecoin payment API and hosted checkout for websites, SaaS products and WooCommerce stores.** Accept payments across **six networks**, including **Base**, with connected-wallet checkout, manual transfer and signed payment Webhooks.
+Official integration documentation and merchant-side code examples for **BoltUtil**, a non-custodial stablecoin payment API and hosted checkout. Accept USDT and USDC on eligible routes across **six networks**, with funds sent directly to your configured receiving wallet.
 
-[![Service](https://img.shields.io/badge/BoltUtil-v2.1-111827?style=flat-square)](https://boltutil.com?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=readme)
-[![Assets](https://img.shields.io/badge/Payments-USDT%20%2B%20USDC-16A34A?style=flat-square)](https://boltutil.com/features?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=readme)
-[![Networks](https://img.shields.io/badge/Networks-6_including_Base-0052FF?style=flat-square)](https://boltutil.com/docs/base-integration?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=readme)
-[![Examples](https://github.com/changye0413/BoltUtil/actions/workflows/examples.yml/badge.svg)](https://github.com/changye0413/BoltUtil/actions/workflows/examples.yml)
+This repository contains public documentation and integration examples, not the proprietary BoltUtil platform source. The separate WooCommerce plugin is open source.
 
-[**Start free**](https://boltutil.com/auth/register?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=start) · [**API documentation**](https://boltutil.com/developer-docs?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=docs) · [**Try checkout interactions**](https://boltutil.com/?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=checkout-demo#wallet-checkout) · [**WooCommerce demo shop**](https://shop-test.boltutil.com/) · [**Download the plugin**](https://github.com/changye0413/boltutil-payments-for-woocommerce/releases/tag/v0.6.1)
+[![Service](https://img.shields.io/badge/BoltUtil-Integration_Docs-111827?style=flat-square)](https://boltutil.com?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=readme)
+[![Assets](https://img.shields.io/badge/Payments-USDT%20%2B%20USDC-16A34A?style=flat-square)](https://boltutil.com/features?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=readme)
+[![Networks](https://img.shields.io/badge/Networks-6_including_Base-0052FF?style=flat-square)](https://boltutil.com/docs/base-integration?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=readme)
+[![Examples](https://github.com/changye0413/boltutil/actions/workflows/examples.yml/badge.svg)](https://github.com/changye0413/boltutil/actions/workflows/examples.yml)
+
+[**Start free**](https://boltutil.com/auth/register?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=start) · [**API documentation**](https://boltutil.com/developer-docs?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=docs) · [**Try checkout interactions**](https://boltutil.com/?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=checkout-demo#wallet-checkout) · [**WooCommerce demo shop**](https://shop-test.boltutil.com/) · [**Install the WooCommerce plugin**](https://wordpress.org/plugins/boltutil-payments-for-woocommerce/)
 
 Create an order from your backend. Your customer pays the merchant’s receiving wallet. BoltUtil matches the on-chain transfer, waits for the required confirmation or finality, then sends a signed Webhook so your application can fulfill the order.
 
@@ -19,7 +21,7 @@ Create an order from your backend. Your customer pays the merchant’s receiving
 
 *Screenshot of the live website’s interactive demonstration. The illustrated address and QR code are not payment instructions. The separate demo shop supports real small purchases: payments there use real funds.*
 
-## What changed in v2.1?
+## Integration overview
 
 | Capability | What it means for your integration |
 | --- | --- |
@@ -31,7 +33,7 @@ Create an order from your backend. Your customer pays the merchant’s receiving
 | WooCommerce | Separate open-source v0.6.1 plugin with token switching and eligible network choices |
 | Localization | Website UI and these product guides in 12 languages |
 
-This repository is the **public integration hub**, not the production platform source. The hosted BoltUtil service is proprietary. See [repository scope](NOTICE.md). The service version **v2.1**, plugin version **v0.6.1** and public documentation updates are separate.
+This repository is the **public integration hub**, not the production platform source. The hosted BoltUtil service is proprietary. See [repository scope](NOTICE.md). The hosted service, plugin **v0.6.1** and public documentation updates have separate version histories. Documentation reviewed: **2026-10-31**.
 
 ## Supported stablecoins and networks
 
@@ -48,9 +50,9 @@ Six networks provide **eleven asset/network combinations**. Routes appear only w
 
 **Token identity matters.** Native, bridged and pegged tokens are different assets even when wallet labels look similar. Use the contract or mint supported by the selected checkout route. Other USDC representations are not interchangeable. TRON USDC is not offered.
 
-[USDC integration guide](https://boltutil.com/docs/usdc-integration?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=readme) · [Base integration guide](https://boltutil.com/docs/base-integration?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=readme) · [Network availability](https://boltutil.com/features?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=readme)
+[USDC integration guide](https://boltutil.com/docs/usdc-integration?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=readme) · [Base integration guide](https://boltutil.com/docs/base-integration?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=readme) · [Network availability](https://boltutil.com/features?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=readme)
 
-Base payment confirmation depends on the configured L1 finality policy. A submitted transfer is not yet a confirmed payment; no fixed confirmation time is promised.
+Base uses L2 confirmation by default and confirms an order after the configured requirements are met. Strict mode waits for L1 finality. Timing depends on network and service conditions; no fixed confirmation time is guaranteed. A submitted transfer is not yet a confirmed payment.
 
 ## Wallet checkout: less typing, explicit approval
 
@@ -68,7 +70,7 @@ The checkout filters unsupported combinations. Phantom’s BNB connection is exc
 
 ## Quick start for developers
 
-1. [Create a merchant account](https://boltutil.com/auth/register?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=start).
+1. [Create a merchant account](https://boltutil.com/auth/register?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=start).
 2. Add and enable receiving **addresses** for your intended networks and assets. No private key or recovery phrase is required by BoltUtil.
 3. Create a LIVE API key and an HTTPS Webhook endpoint in the same merchant account. Keep the matching signing secret on your server.
 4. Create a payment order and redirect to the returned `checkoutUrl`.
@@ -101,7 +103,7 @@ The response includes `orderToken`, `merchantExternalId`, `checkoutUrl`, `paymen
 
 The request minimum is 1, with up to six fractional digits. Sign the exact body bytes you send and generate a fresh timestamp for each request. No live USD conversion quote is implied by the example.
 
-[Create-order reference](https://boltutil.com/docs/create-order?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=readme) · [Query order status](https://boltutil.com/docs/order-status?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=readme) · [Verify Webhook signatures](https://boltutil.com/docs/webhook-signature?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=readme)
+[Create-order reference](https://boltutil.com/docs/create-order?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=readme) · [Query order status](https://boltutil.com/docs/order-status?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=readme) · [Verify Webhook signatures](https://boltutil.com/docs/webhook-signature?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=readme)
 
 Import [OpenAPI](openapi.yaml) or the [Postman collection](postman/BoltUtil.postman_collection.json). The examples below retain USDT defaults; choose an authorized USDC/network pair when adapting them. They illustrate merchant integration, not a complete fulfillment system.
 
@@ -122,9 +124,11 @@ Import [OpenAPI](openapi.yaml) or the [Postman collection](postman/BoltUtil.post
 
 Requirements: WordPress **7.0+**, PHP **7.4+**, WooCommerce **11.1+**, HTTPS and a store currency of **USD**. The USD numeric total is the invoice basis; this plugin does not provide a live exchange-rate quote or lock. Customer network fees are separate.
 
-[Installable ZIP and release notes](https://github.com/changye0413/boltutil-payments-for-woocommerce/releases/tag/v0.6.1) · [Setup guide](https://boltutil.com/woocommerce?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=woocommerce) · [Live demo store](https://shop-test.boltutil.com/)
+[Installable ZIP and release notes](https://github.com/changye0413/boltutil-payments-for-woocommerce/releases/tag/v0.6.1) · [Setup guide](https://boltutil.com/woocommerce?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=woocommerce) · [Live demo store](https://shop-test.boltutil.com/)
 
-Submitted to WordPress.org on **October 12, 2026**. Automated submission scan: **Pass**. Status: **awaiting manual review**, not directory approval. Until approved and published, install the versioned ZIP from GitHub Releases; GitHub source archives are not the install package.
+The plugin is published in the [WordPress.org Plugin Directory](https://wordpress.org/plugins/boltutil-payments-for-woocommerce/). Install from WordPress.org or use the versioned installable ZIP from GitHub Releases. GitHub source archives are not the plugin install package.
+
+The GitHub installation ZIP includes English source text and eleven bundled translations. The WordPress.org edition uses WordPress language packs; available translations depend on published packs and the selected WordPress locale. Merchant-written checkout labels are not translated automatically.
 
 ## Payment correctness and operations
 
@@ -152,11 +156,11 @@ BoltUtil handles payment monitoring and notifications. It is not an exchange, a 
 
 ## Plans, documentation and support
 
-A daily free order allowance is available. Subscription plans have no daily order limit. **Current quotas, benefits and fees are governed by the [official pricing page](https://boltutil.com/pricing?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=pricing)**, rather than a fixed number in this README. Network gas fees still apply.
+A daily free order allowance is available. Subscription plans have no daily order limit. **Current quotas, benefits and fees are governed by the [official pricing page](https://boltutil.com/pricing?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=pricing)**, rather than a fixed number in this README. Network gas fees still apply.
 
-- [Developer documentation](https://boltutil.com/developer-docs?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=docs) and [system status](https://boltutil.com/status?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=readme).
-- [GitHub Discussions](https://github.com/changye0413/BoltUtil/discussions) for integration questions; [Issues](https://github.com/changye0413/BoltUtil/issues/new/choose) for reproducible documentation/example problems.
+- [Developer documentation](https://boltutil.com/developer-docs?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=docs) and [system status](https://boltutil.com/status?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=readme).
+- [GitHub Discussions](https://github.com/changye0413/boltutil/discussions) for integration questions; [Issues](https://github.com/changye0413/boltutil/issues/new/choose) for reproducible documentation/example problems.
 - [support@boltutil.com](mailto:support@boltutil.com) for account and payment support; [X: @heyharryzhang](https://x.com/heyharryzhang) for updates.
-- [Privacy](https://boltutil.com/privacy?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=readme) · [Terms](https://boltutil.com/terms?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=readme) · [Security reporting](SECURITY.md).
+- [Privacy](https://boltutil.com/privacy?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=readme) · [Terms](https://boltutil.com/terms?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=readme) · [Security reporting](SECURITY.md).
 
 These 12-language guides share the same asset and service scope. The [English guide](README.md) and linked API reference are the technical baseline. Public docs and examples use [MIT](LICENSE); the separate WooCommerce plugin uses GPLv2 or later. Brand names and logos identify integrations and do not imply endorsement. The license for this repository does not grant rights to the proprietary platform or its trademarks.

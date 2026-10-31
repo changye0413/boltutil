@@ -1,16 +1,16 @@
-# BoltUtil v2.1
+# BoltUtil — USDT / USDC 決済 API
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [Español](README.es.md) · [Português](README.pt-BR.md) · [Русский](README.ru.md) · [Tiếng Việt](README.vi.md) · [Türkçe](README.tr.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [العربية](README.ar.md) · [Français](README.fr.md) · [हिन्दी](README.hi.md)
 
 ## USDT・USDC 決済を、あなたのウォレットへ直接。
 
-[無料で始める](https://boltutil.com/ja/auth/register?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=start) · [API ドキュメント](https://boltutil.com/ja/developer-docs?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=docs) · [料金](https://boltutil.com/ja/pricing?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=pricing)
+[無料で始める](https://boltutil.com/ja/auth/register?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=start) · [API ドキュメント](https://boltutil.com/ja/developer-docs?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=docs) · [料金](https://boltutil.com/ja/pricing?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=pricing)
 
-BoltUtil v2.1 は、Web サイト、SaaS、WooCommerce ストア向けの非カストディ型ステーブルコイン決済 API とホスト型決済ページです。加盟店のサーバーが注文を作成し、購入者が加盟店の受取アドレスへ送金します。BoltUtil はオンチェーン送金と承認条件を確認し、署名付き Webhook を送ります。秘密鍵やリカバリーフレーズは要求しません。
+BoltUtil は、Web サイト、SaaS、WooCommerce ストア向けの非カストディ型ステーブルコイン決済 API とホスト型決済ページです。加盟店のサーバーが注文を作成し、購入者が加盟店の受取アドレスへ送金します。BoltUtil はオンチェーン送金と承認条件を確認し、署名付き Webhook を送ります。秘密鍵やリカバリーフレーズは要求しません。
 
 ## 対応ネットワークと資産
 
-6 ネットワーク、11 種類の資産・ネットワーク組み合わせを共通の手順で接続できます。TRON は USDT、Ethereum・Polygon PoS・Solana は USDT とネイティブ USDC、BNB Smart Chain は USDT と Binance-Peg USDC、Base は Bridged USDT とネイティブ USDC に対応します。サービスで有効化され、加盟店の受取アドレスが有効な経路のみ表示します。ネイティブ、ブリッジ、ペッグ版は別の資産です。注文指定のコントラクトまたは Mint を使用してください。Base の承認は設定された L1 ファイナリティ方針に従い、一定時間での完了を保証しません。
+6 ネットワーク、11 種類の資産・ネットワーク組み合わせを共通の手順で接続できます。TRON は USDT、Ethereum・Polygon PoS・Solana は USDT とネイティブ USDC、BNB Smart Chain は USDT と Binance-Peg USDC、Base は Bridged USDT とネイティブ USDC に対応します。サービスで有効化され、加盟店の受取アドレスが有効な経路のみ表示します。ネイティブ、ブリッジ、ペッグ版は別の資産です。注文指定のコントラクトまたは Mint を使用してください。Base は標準で L2 承認を使用し、設定された承認条件を満たした後に注文を更新します。厳格モードでは L1 ファイナリティを待ちます。所要時間はネットワークとサービスの状態により変わり、一定時間を保証しません。
 
 ## ウォレット決済と手動送金
 
@@ -28,12 +28,12 @@ API の最小金額は 1、小数点以下は最大 6 桁です。Node.js・Pyth
 
 ## WooCommerce と料金
 
-別の v0.6.1 プラグインで通貨・ネットワークを選択できます。検証後に注文を更新し、ストアへのリダイレクトだけでは支払済みにしません。WordPress 7.0+、PHP 7.4+、WooCommerce 11.1+、HTTPS、ストア通貨 USD が必要です。リアルタイム為替見積もりやレート固定は提供しません。2026 年 10 月 12 日に WordPress.org へ提出し、自動スキャンは合格、手動審査待ちです。公開前は GitHub Releases の ZIP を使用してください。デモストアの購入には実際の資金を使います。
+プラグイン v0.6.1 は [WordPress.org](https://wordpress.org/plugins/boltutil-payments-for-woocommerce/) ディレクトリで公開されています。WordPress 7.0+、PHP 7.4+、WooCommerce 11.1+、HTTPS、USD 建てストアと BoltUtil アカウントが必要です。通貨とネットワークを選択し、署名付き Webhook と支払い状態の検証後に注文を更新します。ストアへ戻るだけでは支払いの証明になりません。リアルタイムの為替レートは提供しません。WordPress.org または GitHub Releases のバージョン付きインストール ZIP を使用してください。デモでの購入には実際の資金を使います。
 
 毎日の無料注文枠と、日次注文数の制限がないサブスクリプションがあります。最新の枠・特典・料金は公式サイトをご確認ください。ネットワーク手数料は別途発生します。不足・遅延・帰属不明の支払いは確認が必要です。取引所や自動法定通貨換算サービスではありません。
 
 公開ドキュメントと例は MIT、商用プラットフォーム本体は非公開です。プラグインは GPLv2 以降です。ブランド名は公式の推奨を意味しません。技術仕様は英語ガイドと API リファレンスを基準とし、秘密情報は公開せず、安全性の報告は SECURITY.md に従ってください。
 
-[USDC ガイド](https://boltutil.com/ja/docs/usdc-integration?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=readme) · [Base ガイド](https://boltutil.com/ja/docs/base-integration?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=readme) · [WooCommerce プラグイン](https://github.com/changye0413/boltutil-payments-for-woocommerce) · [デモストア](https://shop-test.boltutil.com/)
+[USDC ガイド](https://boltutil.com/ja/docs/usdc-integration?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=readme) · [Base ガイド](https://boltutil.com/ja/docs/base-integration?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=readme) · [WooCommerce プラグイン](https://github.com/changye0413/boltutil-payments-for-woocommerce) · [デモストア](https://shop-test.boltutil.com/)
 
-[サポートと例](examples/README.md) · [OpenAPI](openapi.yaml) · [Postman](postman/BoltUtil.postman_collection.json) · [Discussions](https://github.com/changye0413/BoltUtil/discussions) · [support@boltutil.com](mailto:support@boltutil.com) · [X: @heyharryzhang](https://x.com/heyharryzhang) · [English](README.md)
+[サポートと例](examples/README.md) · [OpenAPI](openapi.yaml) · [Postman](postman/BoltUtil.postman_collection.json) · [Discussions](https://github.com/changye0413/boltutil/discussions) · [support@boltutil.com](mailto:support@boltutil.com) · [X: @heyharryzhang](https://x.com/heyharryzhang) · [English](README.md)

@@ -34,6 +34,8 @@ paths:
           $ref: '#/components/responses/ApiError'
         '401':
           $ref: '#/components/responses/ApiError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
   /api/v1/order/status:
     post:
       summary: Query an order by merchant order ID
@@ -66,6 +68,8 @@ paths:
           $ref: '#/components/responses/ApiError'
         '401':
           $ref: '#/components/responses/ApiError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
 components:
   parameters:
     BoltKey:
@@ -110,7 +114,12 @@ components:
         orderDesc: { type: string, maxLength: 255 }
         notifyUrl: { type: string, format: uri, maxLength: 255, pattern: '^https://.*' }
         returnUrl: { type: string, format: uri, maxLength: 255 }
-        expiredMinutes: { type: integer, minimum: 15, maximum: 60, default: 30 }
+        expiredMinutes:
+          type: integer
+          minimum: 15
+          maximum: 60
+          default: 30
+          description: Subject to account-plan restrictions. Free orders use 30 minutes.
         metadata: { type: object, maxProperties: 10, additionalProperties: true }
     OrderCreateResult:
       allOf:
@@ -178,6 +187,18 @@ components:
   responses:
     ApiError:
       description: Invalid request or authentication failure
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResult'
+    RateLimitError:
+      description: >-
+        Request rate or daily account allowance exceeded. Read code and message
+        to distinguish the cause. For a daily allowance, wait for the next
+        allowance period or change the plan; immediate retry will not help.
+        For request throttling, use bounded backoff. Never create a replacement
+        external order ID merely to retry an uncertain payment request; query
+        the original order first. Do not retry 400 duplicate-ID errors blindly.
       content:
         application/json:
           schema:

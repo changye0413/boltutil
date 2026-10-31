@@ -1,16 +1,16 @@
-# BoltUtil v2.1
+# BoltUtil — API de pagamentos USDT / USDC
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [Español](README.es.md) · [Português](README.pt-BR.md) · [Русский](README.ru.md) · [Tiếng Việt](README.vi.md) · [Türkçe](README.tr.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [العربية](README.ar.md) · [Français](README.fr.md) · [हिन्दी](README.hi.md)
 
 ## Pagamentos em USDT e USDC, direto para sua carteira.
 
-[Começar grátis](https://boltutil.com/pt/auth/register?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=start) · [Documentação API](https://boltutil.com/pt/developer-docs?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=docs) · [Preços](https://boltutil.com/pt/pricing?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=pricing)
+[Começar grátis](https://boltutil.com/pt/auth/register?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=start) · [Documentação API](https://boltutil.com/pt/developer-docs?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=docs) · [Preços](https://boltutil.com/pt/pricing?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=pricing)
 
-BoltUtil v2.1 é uma API de pagamentos em stablecoins com checkout hospedado e sem custódia para sites, SaaS e lojas WooCommerce. Seu servidor cria o pedido, e o cliente paga à carteira do comerciante. O serviço verifica a transferência e as confirmações antes de enviar um Webhook assinado. Não solicita chaves privadas ou frases de recuperação.
+BoltUtil é uma API de pagamentos em stablecoins com checkout hospedado e sem custódia para sites, SaaS e lojas WooCommerce. Seu servidor cria o pedido, e o cliente paga à carteira do comerciante. O serviço verifica a transferência e as confirmações antes de enviar um Webhook assinado. Não solicita chaves privadas ou frases de recuperação.
 
 ## Redes e novidades
 
-Uma integração cobre seis redes e onze combinações de ativo/rede. TRON aceita USDT. Ethereum, Polygon PoS e Solana aceitam USDT e USDC nativo. BNB Smart Chain aceita USDT e Binance-Peg USDC. Base aceita Bridged USDT e USDC nativo. As rotas precisam estar ativadas pelo serviço e ter uma carteira receptora ativa. Tokens nativos, bridged e vinculados não são intercambiáveis; use o contrato ou mint do pedido. A confirmação em Base depende da política de finalidade L1 configurada, sem prazo fixo garantido.
+Uma integração cobre seis redes e onze combinações de ativo/rede. TRON aceita USDT. Ethereum, Polygon PoS e Solana aceitam USDT e USDC nativo. BNB Smart Chain aceita USDT e Binance-Peg USDC. Base aceita Bridged USDT e USDC nativo. As rotas precisam estar ativadas pelo serviço e ter uma carteira receptora ativa. Tokens nativos, bridged e vinculados não são intercambiáveis; use o contrato ou mint do pedido. Base usa confirmação L2 por padrão e atualiza o pedido quando os requisitos configurados são atendidos. O modo estrito aguarda a finalidade L1. O tempo depende da rede e do serviço; não há prazo fixo garantido.
 
 ## Carteira conectada ou transferência manual
 
@@ -28,12 +28,12 @@ A API aceita valores a partir de 1 com até seis casas decimais. Os exemplos em 
 
 ## WooCommerce, planos e suporte
 
-O plugin independente v0.6.1 permite alternar a moeda e escolher a rede. Só atualiza o pedido após verificar o pagamento; retornar à loja não prova pagamento. Requer WordPress 7.0+, PHP 7.4+, WooCommerce 11.1+, HTTPS e moeda USD. Não fornece cotação de câmbio em tempo real. Enviado ao WordPress.org em 12 de outubro de 2026: verificação automática aprovada, revisão manual pendente. Instale o ZIP versionado do GitHub Releases. Compras na loja de demonstração usam fundos reais.
+O plugin v0.6.1 está publicado no diretório do [WordPress.org](https://wordpress.org/plugins/boltutil-payments-for-woocommerce/). Requer WordPress 7.0+, PHP 7.4+, WooCommerce 11.1+, HTTPS, loja em USD e conta BoltUtil. Permite escolher moeda e rede e verifica o Webhook assinado e o status antes de concluir o pedido; retornar à loja não comprova o pagamento. Não oferece cotação de câmbio em tempo real. Instale pelo WordPress.org ou pelo ZIP versionado do GitHub Releases. As compras da demonstração usam dinheiro real.
 
 Há uma cota gratuita diária e planos sem limite diário de pedidos. Consulte os limites, benefícios e preços atuais no site oficial; taxas de rede são separadas. Pagamentos insuficientes, tardios ou ambíguos precisam de análise. BoltUtil não é uma exchange nem converte automaticamente para moeda fiduciária.
 
 Este repositório contém documentação e exemplos sob MIT; a plataforma de produção é proprietária. O plugin usa GPLv2 ou posterior. Marcas não representam endosso. A documentação inglesa e a referência API são a base técnica. Não publique credenciais; siga SECURITY.md para vulnerabilidades.
 
-[Guia USDC](https://boltutil.com/pt/docs/usdc-integration?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=readme) · [Guia Base](https://boltutil.com/pt/docs/base-integration?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=readme) · [Plugin WooCommerce](https://github.com/changye0413/boltutil-payments-for-woocommerce) · [Demo ao vivo](https://shop-test.boltutil.com/)
+[Guia USDC](https://boltutil.com/pt/docs/usdc-integration?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=readme) · [Guia Base](https://boltutil.com/pt/docs/base-integration?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=readme) · [Plugin WooCommerce](https://github.com/changye0413/boltutil-payments-for-woocommerce) · [Demo ao vivo](https://shop-test.boltutil.com/)
 
-[Suporte e exemplos](examples/README.md) · [OpenAPI](openapi.yaml) · [Postman](postman/BoltUtil.postman_collection.json) · [Discussions](https://github.com/changye0413/BoltUtil/discussions) · [support@boltutil.com](mailto:support@boltutil.com) · [X: @heyharryzhang](https://x.com/heyharryzhang) · [English](README.md)
+[Suporte e exemplos](examples/README.md) · [OpenAPI](openapi.yaml) · [Postman](postman/BoltUtil.postman_collection.json) · [Discussions](https://github.com/changye0413/boltutil/discussions) · [support@boltutil.com](mailto:support@boltutil.com) · [X: @heyharryzhang](https://x.com/heyharryzhang) · [English](README.md)

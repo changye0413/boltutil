@@ -1,16 +1,16 @@
-# BoltUtil v2.1
+# BoltUtil — API платежей USDT / USDC
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [Español](README.es.md) · [Português](README.pt-BR.md) · [Русский](README.ru.md) · [Tiếng Việt](README.vi.md) · [Türkçe](README.tr.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [العربية](README.ar.md) · [Français](README.fr.md) · [हिन्दी](README.hi.md)
 
 ## Принимайте USDT и USDC напрямую на свой кошелёк.
 
-[Начать бесплатно](https://boltutil.com/ru/auth/register?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=start) · [Документация API](https://boltutil.com/ru/developer-docs?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=docs) · [Тарифы](https://boltutil.com/ru/pricing?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=pricing)
+[Начать бесплатно](https://boltutil.com/ru/auth/register?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=start) · [Документация API](https://boltutil.com/ru/developer-docs?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=docs) · [Тарифы](https://boltutil.com/ru/pricing?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=pricing)
 
-BoltUtil v2.1 — API платежей в стейблкоинах и размещённая платёжная страница без хранения средств платформой. Подходит для сайтов, SaaS и магазинов WooCommerce. Сервер продавца создаёт заказ; клиент переводит средства на адрес продавца. После проверки перевода и подтверждений BoltUtil отправляет подписанный Webhook. Приватные ключи и seed-фразы не требуются.
+BoltUtil — API платежей в стейблкоинах и размещённая платёжная страница без хранения средств платформой. Подходит для сайтов, SaaS и магазинов WooCommerce. Сервер продавца создаёт заказ; клиент переводит средства на адрес продавца. После проверки перевода и подтверждений BoltUtil отправляет подписанный Webhook. Приватные ключи и seed-фразы не требуются.
 
 ## Сети и активы
 
-Шесть сетей, один процесс интеграции и одиннадцать сочетаний актив/сеть. TRON поддерживает USDT. Ethereum, Polygon PoS и Solana — USDT и нативный USDC. BNB Smart Chain — USDT и Binance-Peg USDC. Base — Bridged USDT и нативный USDC. Доступны только включённые сервисом маршруты с активным адресом продавца. Нативные, мостовые и привязанные токены не взаимозаменяемы: проверяйте контракт или mint заказа. Подтверждение Base зависит от настроенной политики финальности L1; фиксированный срок не гарантируется.
+Шесть сетей, один процесс интеграции и одиннадцать сочетаний актив/сеть. TRON поддерживает USDT. Ethereum, Polygon PoS и Solana — USDT и нативный USDC. BNB Smart Chain — USDT и Binance-Peg USDC. Base — Bridged USDT и нативный USDC. Доступны только включённые сервисом маршруты с активным адресом продавца. Нативные, мостовые и привязанные токены не взаимозаменяемы: проверяйте контракт или mint заказа. Base по умолчанию использует подтверждение L2 и обновляет заказ после выполнения настроенных условий. Строгий режим ожидает финальности L1. Время зависит от сети и сервиса; фиксированный срок не гарантируется.
 
 ## Подключение кошелька или ручной перевод
 
@@ -28,12 +28,12 @@ BoltUtil v2.1 — API платежей в стейблкоинах и разме
 
 ## WooCommerce и тарифы
 
-Отдельный плагин v0.6.1 предлагает выбор валюты и сети. Он проверяет платёж до обновления заказа; возврат в магазин не подтверждает оплату. Требуются WordPress 7.0+, PHP 7.4+, WooCommerce 11.1+, HTTPS и валюта магазина USD. Котировка или фиксация обменного курса не предоставляется. 12 октября 2026 года плагин отправлен в WordPress.org: автоматическая проверка пройдена, ручная проверка ожидается. До публикации используйте ZIP из GitHub Releases. Покупки в демонстрационном магазине используют реальные средства.
+Плагин v0.6.1 опубликован в каталоге [WordPress.org](https://wordpress.org/plugins/boltutil-payments-for-woocommerce/). Требуются WordPress 7.0+, PHP 7.4+, WooCommerce 11.1+, HTTPS, валюта магазина USD и аккаунт BoltUtil. Покупатель выбирает токен и сеть; заказ обновляется после проверки подписанного Webhook и статуса платежа. Возврат в магазин не доказывает оплату. Курс обмена в реальном времени не предоставляется. Установите плагин из WordPress.org или используйте установочный ZIP версии из GitHub Releases. Покупки в демомагазине используют реальные средства.
 
 Есть ежедневная бесплатная квота и подписки без дневного ограничения заказов. Актуальные условия и цены опубликованы на сайте; сетевые комиссии оплачиваются отдельно. Неполные, поздние и неоднозначные платежи требуют проверки. BoltUtil не является биржей и не конвертирует средства автоматически в фиат.
 
 Публичные документы и примеры лицензированы по MIT, производственная платформа закрытая. Плагин — GPLv2 или новее. Названия брендов не означают одобрение. Техническая основа — английское руководство и API. Не публикуйте секреты; уязвимости сообщайте по SECURITY.md.
 
-[Руководство USDC](https://boltutil.com/ru/docs/usdc-integration?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=readme) · [Руководство Base](https://boltutil.com/ru/docs/base-integration?utm_source=github&utm_medium=referral&utm_campaign=boltutil_v21&utm_content=readme) · [Плагин WooCommerce](https://github.com/changye0413/boltutil-payments-for-woocommerce) · [Демонстрационный магазин](https://shop-test.boltutil.com/)
+[Руководство USDC](https://boltutil.com/ru/docs/usdc-integration?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=readme) · [Руководство Base](https://boltutil.com/ru/docs/base-integration?utm_source=github&utm_medium=referral&utm_campaign=integration_hub&utm_content=readme) · [Плагин WooCommerce](https://github.com/changye0413/boltutil-payments-for-woocommerce) · [Демонстрационный магазин](https://shop-test.boltutil.com/)
 
-[Поддержка и примеры](examples/README.md) · [OpenAPI](openapi.yaml) · [Postman](postman/BoltUtil.postman_collection.json) · [Discussions](https://github.com/changye0413/BoltUtil/discussions) · [support@boltutil.com](mailto:support@boltutil.com) · [X: @heyharryzhang](https://x.com/heyharryzhang) · [English](README.md)
+[Поддержка и примеры](examples/README.md) · [OpenAPI](openapi.yaml) · [Postman](postman/BoltUtil.postman_collection.json) · [Discussions](https://github.com/changye0413/boltutil/discussions) · [support@boltutil.com](mailto:support@boltutil.com) · [X: @heyharryzhang](https://x.com/heyharryzhang) · [English](README.md)
