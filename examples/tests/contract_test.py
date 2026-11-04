@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Cross-language contract tests: loopback only, synthetic keys, no real orders.
-运行前安装选定语言的运行时。Java/C# 会自动构建；PHP 必须有 cURL。
-可用 NODE/PHP_COMMAND/JAVA/DOTNET 环境变量指定命令（允许带参数，例如 PHP WASM CLI）。
+Install the selected language runtimes first. Java/C# build automatically; PHP requires cURL.
+Override commands with NODE/PHP_COMMAND/JAVA/DOTNET environment variables (arguments are allowed, for example for a PHP WASM CLI).
 """
 import argparse
 import contextlib

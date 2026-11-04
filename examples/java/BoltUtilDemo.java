@@ -23,14 +23,16 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * BoltUtil 商户接入示例 / Merchant demo (Java 11+, Maven).
- * 只调用 POST /api/v1/order/create，不调用 WordPress /payments。
- * 建单 → 保存付款信息 → checkoutUrl → 验签回调 → 数据库事务入账。
- * Gson 负责 JSON 转义和解析，BigDecimal 保存金额；不手写 JSON 拼接。
- * 不连接数据库、不自动发货；生产改造点见 handleVerifiedEvent。密钥只从服务端环境读取。
+ * BoltUtil merchant integration demo (Java 11+, Maven).
+ * Uses POST /api/v1/order/create, not the WordPress /payments API.
+ * Flow: create an order, save payment details, open checkoutUrl, verify the webhook,
+ * then record the payment in a database transaction.
+ * Gson handles JSON escaping and parsing; BigDecimal preserves monetary precision.
+ * No database or fulfillment is implemented; see handleVerifiedEvent for production requirements.
+ * Read secrets only from server-side environment variables.
  */
 public class BoltUtilDemo {
-    private static final int MAX_BODY = 65536; // Demo 接收上限，不是平台全局限额。
+    private static final int MAX_BODY = 65536; // Demo request-body limit, not a platform-wide limit.
     private static final Gson JSON = new GsonBuilder().setStrictness(Strictness.STRICT).create();
     private static final String SECRET = env("BOLT_WEBHOOK_SECRET", "");
     private static String env(String key, String fallback) {
@@ -39,7 +41,7 @@ public class BoltUtilDemo {
     private static void requireSecret() {
         if (SECRET.isEmpty() || SECRET.matches("^(YOUR_|whsec_xxx).*")) throw new IllegalArgumentException("Set BOLT_WEBHOOK_SECRET");
     }
-    // 毫秒 timestamp + 点 + 原始 UTF-8 body；签名后发送同一份字节，不能再次序列化。
+    // Sign the millisecond timestamp, a dot, and the raw UTF-8 body; send those same bytes without reserializing.
     public static String signBody(byte[] body, String timestamp) throws Exception {
         Mac mac = Mac.getInstance("HmacSHA256");
         mac.init(new SecretKeySpec(SECRET.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
@@ -63,7 +65,7 @@ public class BoltUtilDemo {
                 || !Set.of("USDT", "USDC").contains(currency) || (network.equals("TRC20") && currency.equals("USDC"))) {
             throw new IllegalArgumentException("Unsupported network/currency pair");
         }
-        // 最少 1，最多 18 位整数和 6 位小数。禁止 double 中转，避免财务金额精度丢失。
+        // Minimum 1, with up to 18 integer digits and 6 decimal places; never convert through double.
         if (!amount.matches("[1-9][0-9]{0,17}(\\.[0-9]{1,6})?")) throw new IllegalArgumentException("Amount must be >= 1, max 6 decimals");
         String id = env("BOLT_EXTERNAL_ORDER_ID", "INV-" + UUID.randomUUID());
         if (!id.matches("[A-Za-z0-9_-]{6,64}")) throw new IllegalArgumentException("Invalid externalOrderId");
@@ -80,7 +82,7 @@ public class BoltUtilDemo {
                 .timeout(Duration.ofSeconds(20)).header("Content-Type", "application/json")
                 .header("X-Bolt-Key", key).header("X-Bolt-Timestamp", timestamp).header("X-Bolt-Signature", signBody(body, timestamp))
                 .POST(HttpRequest.BodyPublishers.ofByteArray(body)).build();
-        // 禁止重定向认证头。超时后使用同一 externalOrderId 查询，不盲目新建订单。
+        // Never forward credentials through redirects. After a timeout, query the same externalOrderId before retrying.
         System.out.println("externalOrderId: " + id);
         HttpResponse<String> response = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10))
                 .followRedirects(HttpClient.Redirect.NEVER).build().send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
@@ -88,31 +90,34 @@ public class BoltUtilDemo {
         if (response.statusCode() < 200 || response.statusCode() >= 300 || result == null || !result.has("code") || result.get("code").getAsInt() != 200) {
             throw new IOException("Create failed: HTTP " + response.statusCode() + ": " + response.body());
         }
-        // 保存 data.payment.amount/network/currency/address；展示返回金额，可能含匹配偏移。
+        // Save data.payment.amount/network/currency/address; display the returned amount, which may include a matching offset.
         System.out.println(response.body());
     }
     private static int handleVerifiedEvent(JsonObject event) {
         if (event == null || !event.has("externalOrderId") || !event.get("externalOrderId").isJsonPrimitive()
                 || !event.getAsJsonPrimitive("externalOrderId").isString() || !event.has("status")
                 || !event.get("status").isJsonPrimitive() || !event.getAsJsonPrimitive("status").isString()) return 400;
-        // TODO：按当前商户 + externalOrderId 查本地订单，核对币种、网络、地址与返回的精确金额。
-        // amount/paidAmount 用 BigDecimal 比较；少付人工接受需要单独业务授权。
-        // 仅 CONFIRMED/COMPLETED 可处理付款（链上确认/回调送达），不是两笔付款。
-        // eventId 在重试时稳定（旧事件可能没有），唯一约束 + 事务/持久队列实现每单只履约一次。
-        // returnUrl、metadata 不是付款凭证；持久化后 ACK，失败返回 5xx，邮件异步处理。
-        // 此处无数据库，默认 503；BOLT_DEMO_ACK=1 仅联调，避免直接复制导致丢失通知。
+        // TODO: Find the local order by the authenticated merchant and externalOrderId; match currency,
+        // network, receiving address, and the exact payable amount returned when the order was created.
+        // Compare amount/paidAmount with BigDecimal; accepting an underpayment requires explicit business authorization.
+        // Only handle CONFIRMED/COMPLETED payments: chain confirmation and webhook delivery are not separate payments.
+        // eventId stays stable across retries (legacy events may omit it). Use unique constraints with a transaction
+        // or durable queue to ensure each order is fulfilled only once.
+        // returnUrl and metadata are not payment proof. Acknowledge only after persistence; return 5xx on failure
+        // and handle email asynchronously.
+        // No database is implemented here. Default to 503 to avoid losing notifications; BOLT_DEMO_ACK=1 is for local testing only.
         System.out.println("Verified webhook received (no fulfillment performed)");
         return env("BOLT_DEMO_ACK", "").equals("1") ? 204 : 503;
     }
     private static void handleWebhook(HttpExchange exchange) throws IOException {
         if (!exchange.getRequestMethod().equals("POST") || !exchange.getRequestURI().toString().equals("/webhooks/boltutil")) { reply(exchange, 404); return; }
-        // 只读上限 + 1，避免无上限 readAllBytes。生产仍需代理层限制连接数和读超时。
+        // Read at most the limit plus one byte, not unbounded readAllBytes. Production also needs proxy connection limits and read timeouts.
         byte[] body = exchange.getRequestBody().readNBytes(MAX_BODY + 1);
         if (body.length > MAX_BODY) { reply(exchange, 413); return; }
         try {
             if (!verifyWebhook(body, exchange.getRequestHeaders().getFirst("X-Bolt-Webhook-Timestamp"),
                     exchange.getRequestHeaders().getFirst("X-Bolt-Webhook-Signature"))) { reply(exchange, 401); return; }
-            // 验签后才解析；严格 JSON 模式拒绝损坏或多份 JSON，不输出完整个人信息。
+            // Parse only after signature verification. Strict JSON rejects malformed or concatenated documents; do not log personal data in full.
             reply(exchange, handleVerifiedEvent(JSON.fromJson(new String(body, StandardCharsets.UTF_8), JsonObject.class)));
         } catch (com.google.gson.JsonParseException | IllegalStateException e) { reply(exchange, 400); }
         catch (Exception e) { reply(exchange, 503); }

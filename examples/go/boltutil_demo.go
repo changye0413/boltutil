@@ -1,7 +1,7 @@
-// BoltUtil 商户接入示例 / Merchant demo (Go 1.22+).
-// 使用 POST /api/v1/order/create，不调用 WordPress /payments。
-// 流程：服务端建单 → 保存付款信息 → checkoutUrl → 验签回调 → 数据库事务入账。
-// 本程序不连接数据库、不发货；生产改造点见 handleVerifiedEvent。密钥只存服务端环境变量。
+// BoltUtil merchant integration demo (Go 1.22+).
+// Uses POST /api/v1/order/create, not the WordPress /payments API.
+// Flow: create an order server-side -> save payment details -> open checkoutUrl -> verify the webhook -> record payment in a database transaction.
+// This demo does not connect to a database or fulfill orders; see handleVerifiedEvent for production steps. Keep secrets only in server-side environment variables.
 package main
 
 import (
@@ -23,7 +23,7 @@ import (
 	"time"
 )
 
-const maxBody = 64 * 1024 // Demo 接收上限，不是平台全局限额。
+const maxBody = 64 * 1024 // Demo receiver limit, not a platform-wide limit.
 func env(key, fallback string) string {
 	if v := os.Getenv(key); v != "" {
 		return v
@@ -38,7 +38,7 @@ func requireSecret() error {
 	return nil
 }
 
-// 签名毫秒时间戳 + 点 + 原始 UTF-8 body；签名后发送同一份字节，不再序列化。
+// Sign the millisecond timestamp + a dot + the raw UTF-8 body; send those same bytes without serializing again.
 func signBody(body []byte, timestamp string) string {
 	mac := hmac.New(sha256.New, []byte(secret()))
 	mac.Write([]byte(timestamp + "."))
@@ -75,7 +75,7 @@ func createOrder(network, currency, amount string) error {
 	if !valid[network] || (currency != "USDT" && currency != "USDC") || (network == "TRC20" && currency == "USDC") {
 		return errors.New("unsupported network/currency pair")
 	}
-	// 金额使用十进制文本和 json.Number，避免 float64；最少 1，最多 18 位整数、6 位小数。
+	// Use decimal text and json.Number, not float64; minimum 1, up to 18 integer digits and 6 decimal places.
 	if !regexp.MustCompile(`^[1-9][0-9]{0,17}(\.[0-9]{1,6})?$`).MatchString(amount) {
 		return errors.New("amount must be >= 1, max 6 decimals")
 	}
@@ -97,7 +97,7 @@ func createOrder(network, currency, amount string) error {
 	}
 	query := returnURL.Query()
 	query.Set("order", externalID)
-	returnURL.RawQuery = query.Encode() // 保留 query/fragment。
+	returnURL.RawQuery = query.Encode() // Preserve the query parameters and fragment.
 	payload := map[string]any{"amount": json.Number(amount), "externalOrderId": externalID, "network": network, "currency": currency,
 		"notifyUrl": notify, "returnUrl": returnURL.String(), "expiredMinutes": 30, "orderDesc": "BoltUtil demo order", "metadata": map[string]string{"source": "go-demo"}}
 	body, err := json.Marshal(payload)
@@ -113,7 +113,7 @@ func createOrder(network, currency, amount string) error {
 	req.Header.Set("X-Bolt-Key", key)
 	req.Header.Set("X-Bolt-Timestamp", timestamp)
 	req.Header.Set("X-Bolt-Signature", signBody(body, timestamp))
-	// 禁止转发认证头到重定向目标；超时后查询同一个订单号，不盲目创建新单。
+	// Do not forward authentication headers to redirect targets; after a timeout, query the same order ID rather than blindly creating another order.
 	client := &http.Client{Timeout: 20 * time.Second, CheckRedirect: func(_ *http.Request, _ []*http.Request) error { return http.ErrUseLastResponse }}
 	fmt.Println("externalOrderId:", externalID)
 	resp, err := client.Do(req)
@@ -134,7 +134,7 @@ func createOrder(network, currency, amount string) error {
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 || result.Code != 200 {
 		return fmt.Errorf("create failed: HTTP %d: %s", resp.StatusCode, responseBody)
 	}
-	// 保存 data.payment.amount/network/currency/address。展示返回精确金额，不能重用请求的原金额。
+	// Save data.payment.amount/network/currency/address. Display the exact returned amount, not the original requested amount.
 	fmt.Println(string(responseBody))
 	return nil
 }
@@ -145,12 +145,12 @@ func handleVerifiedEvent(event map[string]any) int {
 	if _, ok := event["status"].(string); !ok {
 		return 400
 	}
-	// TODO：当前商户 + externalOrderId 查本地订单；核对网络、币种、地址、返回付款金额。
-	// amount/paidAmount 用十进制比较，不使用 float64；少付人工接受要有单独业务授权。
-	// 仅 CONFIRMED/COMPLETED 可处理付款，分别代表链上确认/回调送达，不是两笔付款。
-	// eventId 在重试时稳定（旧事件可能没有），用数据库唯一约束 + 事务/持久队列保证每单只履约一次。
-	// returnUrl 和 metadata 不能作为付款凭证。持久化后返回 2xx，失败返回 5xx，邮件交给异步任务。
-	// 本例默认 503 防止未入账就 ACK；BOLT_DEMO_ACK=1 仅用于联调，不可直接用于生产履约。
+	// TODO for production: look up the local order by authenticated merchant context + externalOrderId; match network, currency, address and returned payable amount.
+	// Compare amount/paidAmount with decimal arithmetic, not float64; manually accepting an underpayment requires a separate business policy.
+	// Process only CONFIRMED/COMPLETED: chain confirmation and webhook delivery respectively, not two separate payments.
+	// eventId stays stable across retries (legacy events may omit it); use database unique constraints and transactions/a durable queue to fulfill each order only once.
+	// Neither returnUrl nor metadata is payment proof. Return 2xx after durable persistence, 5xx on failure, and send emails in asynchronous jobs.
+	// Default to 503 to avoid acknowledging an unrecorded payment; BOLT_DEMO_ACK=1 is only for local integration testing, not production fulfillment.
 	fmt.Println("Verified webhook received (no fulfillment performed)")
 	if os.Getenv("BOLT_DEMO_ACK") == "1" {
 		return 204
@@ -178,7 +178,7 @@ func webhookHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var event map[string]any
-	// UseNumber 保留金额精度；拒绝多份 JSON，验签前不解析、不更新任何业务数据。
+	// UseNumber preserves amount precision; reject multiple JSON values, and do not parse or update business data before signature verification.
 	decoder := json.NewDecoder(bytes.NewReader(body))
 	decoder.UseNumber()
 	if err = decoder.Decode(&event); err != nil || event == nil {

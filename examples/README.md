@@ -1,14 +1,16 @@
-# BoltUtil merchant API examples / 商户开发示例
+# BoltUtil merchant API examples
 
-These six server-side demos use **`POST /api/v1/order/create`**. They do not use the WordPress `/payments` API. Code contains detailed Chinese comments; the protocol and commands below are shared by all languages.
+**English** · [简体中文](README.zh-CN.md)
 
-这些示例用于服务端建单与回调验签联调，不含您的数据库、持久去重、发货或邮件任务。默认回调返回 **503**，防止未保存订单就误确认通知；只有在本地联调时才设置 `BOLT_DEMO_ACK=1`，此时验签并校验基本 JSON 结构后返回 **204**，不代表完成业务入账。
+These six server-side demos use **`POST /api/v1/order/create`**. They do not use the WordPress `/payments` API. Code comments are written in English; the protocol and commands below are shared by all languages.
 
-## 1. Configure / 配置
+These demos cover server-side order creation and webhook signature testing. They do not implement your database, durable deduplication, fulfillment or email jobs. By default, the webhook receiver returns **503** to avoid acknowledging an event before the order is saved. Set `BOLT_DEMO_ACK=1` **only for local integration testing**: it returns **204** after verifying the signature and basic JSON structure, without recording or fulfilling a payment.
+
+## 1. Configure
 
 Get the merchant API key and the **active Webhook secret from the same merchant account**. This API signs requests with the Webhook secret; do not substitute WordPress/scoped integration credentials.
 
-密钥只放服务端，不写入代码、浏览器或 Git。下列值是占位符，请自行替换。`.env.example` 不会被 Demo 自动加载；在终端 export，或由应用的配置系统注入。
+Keep credentials on the server; never put them in source code, the browser or Git. Replace the placeholders below with your own values. The demos do not automatically load `.env.example`; export the variables in your terminal or inject them through your application configuration.
 
 ```bash
 export BOLT_API_BASE='https://api.boltutil.com'
@@ -28,7 +30,7 @@ export PORT='3000'
 
 `notifyUrl` must be public HTTPS and meet the platform's URL policy. Loopback HTTP is only used for the local listener and mock tests. Keep TLS certificate validation enabled. API requests time out after 20 seconds and do not follow redirects with credentials. Production receivers also need proxy-level body/time/connection limits; language built-in demo servers are not a production web stack.
 
-## 2. Run / 运行
+## 2. Run
 
 Every language accepts `create [NETWORK] [CURRENCY] [AMOUNT]`, defaults **TRC20 USDT 1.00**. `webhook` starts the local receiver (PHP uses its built-in server command). API requests with real credentials create real payment orders; this repository does not include a sandbox account.
 
@@ -64,7 +66,7 @@ java -cp 'target/classes:target/dependency/*' BoltUtilDemo webhook
 
 The merchant must activate the service, enable that network/asset and configure an active receiving wallet. This table does not guarantee every route is enabled for your account. Check the returned asset/network and exact token representation before paying; never transfer a different bridged variant.
 
-## 3. Request signing / 建单与签名
+## 3. Request signing
 
 All demos submit this shape (exact JSON property order/whitespace may differ):
 
@@ -105,7 +107,7 @@ The response envelope contains `data.checkoutUrl`, `data.orderToken`, `data.merc
 
 A timeout does not prove order creation failed. Query **`POST /api/v1/order/status`** with the same merchant credentials/signing rule and `{"externalOrderId":"..."}` before retrying. `DUPLICATE_EXTERNAL_ID` is not a new payable order. Do not assume `/order/create` provides the idempotency contract of the separate WordPress API.
 
-## 4. Webhook verification and fulfillment / 回调与履约
+## 4. Webhook verification and fulfillment
 
 `/order/create` sends a **flat** JSON callback. It is not the WordPress `{type,data}` envelope. Typical relevant fields:
 
@@ -142,7 +144,7 @@ Production implementation checklist (also annotated inside every language's call
 
 **Any HTTP 2xx acknowledges delivery**; `204 No Content` is sufficient. `{"status":"SUCCESS"}` is not required. Do not ACK first and then perform work that can be lost on a crash. `BOLT_DEMO_ACK=1` deliberately skips database fulfillment and is exclusively for transport/signature testing; remove it when implementing the production handler.
 
-## 5. Local contract tests / 本地协议测试
+## 5. Local contract tests
 
 ```bash
 # Select installed runtimes, or use all six. No real API keys or real orders are used.
@@ -153,7 +155,10 @@ The harness uses only a loopback mock API and a synthetic Webhook secret. It che
 
 ## References
 
-- [Developer documentation](https://boltutil.com/zh/developer-docs)
-- [Create order](https://boltutil.com/zh/docs/create-order)
-- [Webhook signatures](https://boltutil.com/zh/docs/webhook-signature)
+- [Developer documentation](https://boltutil.com/developer-docs) · [Chinese](https://boltutil.com/zh/developer-docs)
+- [Create order](https://boltutil.com/docs/create-order) · [Chinese](https://boltutil.com/zh/docs/create-order)
+- [Webhook signatures](https://boltutil.com/docs/webhook-signature) · [Chinese](https://boltutil.com/zh/docs/webhook-signature)
+- [Check a payment](https://boltutil.com/guides/verify-usdt-payment) · [Chinese](https://boltutil.com/zh/guides/verify-usdt-payment)
+- [Pricing, limits and fees](https://boltutil.com/pricing) · [Chinese](https://boltutil.com/zh/pricing)
+- **WooCommerce is a separate integration**: [official plugin and setup](https://boltutil.com/woocommerce), [WordPress directory](https://wordpress.org/plugins/boltutil-payments-for-woocommerce/), [plugin source](https://github.com/changye0413/boltutil-payments-for-woocommerce). Use that plugin rather than replacing its scoped payment protocol with these merchant `/order/create` demos.
 - [Public OpenAPI](../openapi.yaml) and [Postman collection](../postman/BoltUtil.postman_collection.json)

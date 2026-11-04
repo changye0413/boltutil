@@ -1,20 +1,20 @@
 /**
- * BoltUtil 商户接入示例 / Merchant integration demo (Node.js 22+).
- * 只使用 POST /api/v1/order/create；不是 WordPress /payments 接口。
- * 顺序：服务端建单 → 保存返回付款信息 → 跳转 checkoutUrl → 验签回调 → 事务入账。
- * 本文件演示协议，不连接您的数据库，不自动发货；生产改造点见 handleVerifiedEvent。
- * 密钥只从环境变量读取，不能放进前端、仓库、URL 或日志。
+ * BoltUtil merchant integration demo (Node.js 22+).
+ * Uses only POST /api/v1/order/create, not the WordPress /payments API.
+ * Flow: create an order server-side -> save returned payment details -> open checkoutUrl -> verify the webhook -> record payment in a database transaction.
+ * This protocol demo does not connect to your database or fulfill orders; see handleVerifiedEvent for the required production steps.
+ * Read secrets only from server-side environment variables; never put them in frontend code, repositories, URLs or logs.
  */
 const http = require('node:http');
 const crypto = require('node:crypto');
-const MAX_BODY = 64 * 1024; // Demo 的接收上限，不是 BoltUtil 全局 API 限额。
+const MAX_BODY = 64 * 1024; // Demo receiver limit, not a platform-wide BoltUtil API limit.
 const SECRET = process.env.BOLT_WEBHOOK_SECRET || '';
 const BASE = process.env.BOLT_API_BASE || 'https://api.boltutil.com';
 
 function requireSecret() {
   if (!SECRET || /^(YOUR_|whsec_xxx)/.test(SECRET)) throw new Error('Set BOLT_WEBHOOK_SECRET');
 }
-// timestamp 必须是毫秒。签名与发送必须复用同一份 UTF-8 原始字节，不能二次序列化。
+// timestamp must be in milliseconds. Sign and send the same raw UTF-8 bytes without serializing again.
 function signBody(body, timestamp) {
   return crypto.createHmac('sha256', SECRET).update(timestamp + '.').update(body).digest('hex');
 }
@@ -30,7 +30,7 @@ function orderInput(network, currency, amount) {
       || !['USDT', 'USDC'].includes(currency) || (network === 'TRC20' && currency === 'USDC')) {
     throw new Error('Unsupported network/currency pair (TRC20 supports USDT only)');
   }
-  // 使用十进制文本；禁止浮点运算、指数记数、负数，最少 1，最多 18 位整数及 6 位小数。
+  // Use decimal text, not floating-point arithmetic, exponent notation or negatives; minimum 1, up to 18 integer digits and 6 decimal places.
   if (!/^[1-9][0-9]{0,17}(\.[0-9]{1,6})?$(?![\s\S])/.test(amount)) throw new Error('Amount must be >= 1, max 6 decimals');
   const externalOrderId = process.env.BOLT_EXTERNAL_ORDER_ID || 'INV-' + crypto.randomUUID();
   if (!/^[A-Za-z0-9_-]{6,64}$(?![\s\S])/.test(externalOrderId)) throw new Error('Invalid externalOrderId');
@@ -44,13 +44,13 @@ async function createOrder(network = 'TRC20', currency = 'USDT', amount = '1.00'
   const notifyUrl = process.env.BOLT_NOTIFY_URL || '';
   if (!notifyUrl.startsWith('https://')) throw new Error('Set a public HTTPS BOLT_NOTIFY_URL');
   const returnUrl = new URL(process.env.BOLT_RETURN_URL || 'https://merchant.example.com/orders/return');
-  returnUrl.searchParams.set('order', input.externalOrderId); // 保留原有 query 与 fragment。
+  returnUrl.searchParams.set('order', input.externalOrderId); // Preserve the existing query parameters and fragment.
   const body = JSON.stringify({ ...input, notifyUrl, returnUrl: returnUrl.href,
     expiredMinutes: 30, orderDesc: 'BoltUtil demo order', metadata: { source: 'node-demo' } })
-    // amount 已经严格校验；输出精确 JSON number，不经过 JS Number 的浮点转换。
+    // amount is strictly validated; emit an exact JSON number without a floating-point conversion through JS Number.
     .replace('"amount":"' + amount + '"', '"amount":' + amount);
   const timestamp = String(Date.now());
-  console.log('externalOrderId:', input.externalOrderId); // 超时后用同一个订单号查询，不盲目创建新订单。
+  console.log('externalOrderId:', input.externalOrderId); // After a timeout, query this same order ID rather than blindly creating another order.
   const response = await fetch(BASE.replace(/\/$/, '') + '/api/v1/order/create', {
     method: 'POST', redirect: 'error', signal: AbortSignal.timeout(20000),
     headers: { 'Content-Type': 'application/json', 'X-Bolt-Key': key,
@@ -58,19 +58,19 @@ async function createOrder(network = 'TRC20', currency = 'USDT', amount = '1.00'
   });
   const result = await response.json();
   if (!response.ok || result.code !== 200) throw new Error('Create failed: ' + JSON.stringify(result));
-  // 存储 data.payment.amount/network/currency/address 及订单号；付款必须用返回金额（可能带匹配偏移）。
+  // Save data.payment.amount/network/currency/address and the order ID; use the returned payable amount, which may include a matching offset.
   console.log(JSON.stringify(result, null, 2));
 }
 function handleVerifiedEvent(event) {
   if (!event || typeof event !== 'object' || Array.isArray(event)
       || typeof event.externalOrderId !== 'string' || typeof event.status !== 'string') return 400;
-  // TODO 生产：按“当前商户 + externalOrderId”查库，核对 network、currency、收款地址、返回付款金额。
-  // amount/paidAmount 用 decimal 比较，不能 parseFloat；少付人工接受需单独业务授权。
-  // 只在 CONFIRMED / COMPLETED 时进入付款处理。CONFIRMED=链上确认，COMPLETED=回调已送达。
-  // eventId 是重试稳定标识（旧事件可能没有）；用唯一约束 + 事务/持久队列去重，同一订单只履约一次。
-  // 浏览器 returnUrl、客户端钱包上报、签名有效本身均不代表已履约。不要信任 metadata 指定的商户身份。
-  // 持久化成功（重复且已处理也算成功）再返回 2xx；失败返回 5xx，请勿在回调内同步发邮件。
-  // 这里没有实现数据库。默认返回 503 防止误以为已经入账；显式开启 DEMO_ACK 仅用于联调。
+  // TODO for production: look up the order by authenticated merchant context + externalOrderId; match network, currency, receiving address and returned payable amount.
+  // Compare amount/paidAmount with decimal arithmetic, not parseFloat; manually accepting an underpayment requires a separate business policy.
+  // Process payment only for CONFIRMED / COMPLETED. CONFIRMED means chain confirmation; COMPLETED means webhook delivery.
+  // eventId stays stable across retries (legacy events may omit it); use unique constraints and transactions/a durable queue to fulfill each order only once.
+  // A browser returnUrl, client wallet report or valid signature alone does not prove fulfillment. Do not trust merchant identity supplied in metadata.
+  // Return 2xx only after durable persistence, including already persisted duplicates; return 5xx on failure and send emails asynchronously outside the webhook handler.
+  // No database handler is implemented here. Return 503 by default to avoid acknowledging an unrecorded payment; explicitly enable BOLT_DEMO_ACK only for local integration testing.
   console.log('Verified webhook received (no fulfillment performed)');
   return process.env.BOLT_DEMO_ACK === '1' ? 204 : 503;
 }
@@ -93,7 +93,7 @@ function startWebhookServer() {
         reply(401); return;
       }
       try { reply(handleVerifiedEvent(JSON.parse(body.toString('utf8')))); }
-      catch { reply(400); } // 已签名但无效的 JSON 也不能让服务崩溃。
+      catch { reply(400); } // Even signed but invalid JSON must not crash the server.
     });
   });
   server.requestTimeout = 15000; server.headersTimeout = 10000;
